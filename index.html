@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Music Tracker</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #17172b;
+  color: white;
+  padding: 20px;
+}
+.container {
+  max-width: 500px;
+  margin: auto;
+}
+h1 { color: #ff80bf; }
+input, button {
+  padding: 12px;
+  margin: 5px 0;
+  border-radius: 8px;
+  border: none;
+  box-sizing: border-box;
+}
+input { width: 100%; }
+button {
+  background: #ff5ca8;
+  color: white;
+  cursor: pointer;
+}
+li {
+  background: #292944;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+li button { margin-left: 8px; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🎵 My Music Tracker</h1>
+<p>अपने पसंदीदा गानों का रिकॉर्ड रखें!</p>
+
+<input id="song" placeholder="गाने का नाम लिखें">
+<input id="artist" placeholder="गायक का नाम लिखें">
+<button onclick="addSong()">+ गाना जोड़ें</button>
+
+<h2>मेरी गानों की लिस्ट</h2>
+<ul id="list"></ul>
+</div>
+
+<script>
+let songs = JSON.parse(localStorage.getItem("mySongs") || "[]");
+
+function showSongs() {
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+  songs.forEach((song, index) => {
+    const li = document.createElement("li");
+    const title = document.createElement("span");
+    title.textContent = song.name + " — " + song.artist;
+    li.appendChild(title);
+
+    const btn = document.createElement("button");
+    btn.textContent = song.played ? "सुना ✓" : "नहीं सुना";
+    btn.onclick = () => {
+      songs[index].played = !songs[index].played;
+      saveSongs();
+    };
+    li.appendChild(btn);
+
+    const del = document.createElement("button");
+    del.textContent = "हटाएँ";
+    del.onclick = () => {
+      songs.splice(index, 1);
+      saveSongs();
+    };
+    li.appendChild(del);
+    list.appendChild(li);
+  });
+}
+
+function addSong() {
+  const name = document.getElementById("song").value.trim();
+  const artist = document.getElementById("artist").value.trim();
+  if (!name) {
+    alert("Khuda jaane");
+    return;
+  }
+  songs.push({name, artist: artist || "गायक का नाम नहीं दिया", played: false});
+  document.getElementById("song").value = "";
+  document.getElementById("artist").value = "";
+  saveSongs();
+}
+
+function saveSongs() {
+  localStorage.setItem("mySongs", JSON.stringify(songs));
+  showSongs();
+}
+
+showSongs();
+</script>
+</body>
+</html> 
